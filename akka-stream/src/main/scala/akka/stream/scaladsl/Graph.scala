@@ -35,7 +35,7 @@ object Merge {
  *
  * '''Cancels when''' downstream cancels
  */
-class Merge[T] private (val inputPorts: Int, val eagerClose: Boolean) extends GraphStage[UniformFanInShape[T, T]] {
+final class Merge[T] private (val inputPorts: Int, val eagerClose: Boolean) extends GraphStage[UniformFanInShape[T, T]] {
   val in: immutable.IndexedSeq[Inlet[T]] = Vector.tabulate(inputPorts)(i ⇒ Inlet[T]("Merge.in" + i))
   val out: Outlet[T] = Outlet[T]("Merge.out")
   override val shape: UniformFanInShape[T, T] = UniformFanInShape(out, in: _*)
@@ -138,7 +138,7 @@ object MergePreferred {
  *
  * A `Broadcast` has one `in` port and 2 or more `out` ports.
  */
-class MergePreferred[T] private (val secondaryPorts: Int, val eagerClose: Boolean) extends GraphStage[MergePreferred.MergePreferredShape[T]] {
+final class MergePreferred[T] private (val secondaryPorts: Int, val eagerClose: Boolean) extends GraphStage[MergePreferred.MergePreferredShape[T]] {
   override val shape: MergePreferred.MergePreferredShape[T] =
     new MergePreferred.MergePreferredShape(secondaryPorts, "MergePreferred")
 
@@ -251,7 +251,7 @@ object Broadcast {
  *   If eagerCancel is enabled: when any downstream cancels; otherwise: when all downstreams cancel
  *
  */
-class Broadcast[T](private val outputPorts: Int, eagerCancel: Boolean) extends GraphStage[UniformFanOutShape[T, T]] {
+final class Broadcast[T](private val outputPorts: Int, eagerCancel: Boolean) extends GraphStage[UniformFanOutShape[T, T]] {
   val in: Inlet[T] = Inlet[T]("Broadast.in")
   val out: immutable.IndexedSeq[Outlet[T]] = Vector.tabulate(outputPorts)(i ⇒ Outlet[T]("Broadcast.out" + i))
   override val shape: UniformFanOutShape[T, T] = UniformFanOutShape(in, out: _*)
@@ -349,7 +349,7 @@ object Balance {
  *
  * '''Cancels when''' all downstreams cancel
  */
-class Balance[T](val outputPorts: Int, waitForAllDownstreams: Boolean) extends GraphStage[UniformFanOutShape[T, T]] {
+final class Balance[T](val outputPorts: Int, waitForAllDownstreams: Boolean) extends GraphStage[UniformFanOutShape[T, T]] {
   val in: Inlet[T] = Inlet[T]("Balance.in")
   val out: immutable.IndexedSeq[Outlet[T]] = Vector.tabulate(outputPorts)(i ⇒ Outlet[T]("Balance.out" + i))
   override val shape: UniformFanOutShape[T, T] = UniformFanOutShape[T, T](in, out: _*)
@@ -435,7 +435,7 @@ object Zip {
  *
  * '''Cancels when''' downstream cancels
  */
-class Zip[A, B] extends ZipWith2[A, B, (A, B)](Pair.apply) {
+final class Zip[A, B] extends ZipWith2[A, B, (A, B)](Pair.apply) {
   override def toString = "Zip"
 }
 
@@ -477,7 +477,7 @@ object Unzip {
 /**
  * Combine the elements of multiple streams into a stream of the combined elements.
  */
-class Unzip[A, B]() extends UnzipWith2[(A, B), A, B](identity) {
+final class Unzip[A, B]() extends UnzipWith2[(A, B), A, B](identity) {
   override def toString = "Unzip"
 }
 
@@ -516,7 +516,7 @@ object Concat {
  *
  * '''Cancels when''' downstream cancels
  */
-class Concat[T](inputCount: Int) extends GraphStage[UniformFanInShape[T, T]] {
+final class Concat[T](inputCount: Int) extends GraphStage[UniformFanInShape[T, T]] {
   val in: immutable.IndexedSeq[Inlet[T]] = Vector.tabulate(inputCount)(i ⇒ Inlet[T]("Concat.in" + i))
   val out: Outlet[T] = Outlet[T]("Concat.out")
   override val shape: UniformFanInShape[T, T] = UniformFanInShape(out, in: _*)
